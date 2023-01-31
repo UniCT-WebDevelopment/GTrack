@@ -38,21 +38,22 @@ guards, resolvers and more, that were important to make the project lean and mai
 * Each "specific" component uses a generic structure that involves some components, services, resolvers in order to make available the CRUD operations of each specific entity.
 
 
-#How to run (development)
+# How to run (development)
 * You can run separately the client app and backend service.
-* To run the Client app go to /ClientApp/src/ and run the command "ng serve". (it will run the UI trough port 4200 by default). 
+* To run the Client app go to /ClientApp/src/ and run the command "npm i". It will install all the required dependencies. 
+* run the command "ng serve". (it will run the UI trough port 4200 by default). 
 * Optionally you might change the url for the backend in the file /ClientApp/src/main.ts if your dotnet server will not be run in the default port (5001).
 * To run the dotnet backend service go to the root directory and run the command "dotnet run".
 * Go to http://localhost:4200 to see the application in development mode.
 
-#How to build (release)
-* The entire package can be built using a single command since the backend is able to handle the client app compilation/build.
+# How to build (release)
+* The entire package can be built using a single command since the backend is able to handle the client app compilation, dependencies load and build.
 * Go to the root directory and run the command "**dotnet publish --configuration Release --output ../Release**"
 * Go to the output folder "../Release" and run the executable file.
 * Go to http://localhost:5001/index.html to use your released app. 
 
 
-#Default access:
+# Default access:
 * Admin: [email: admin@gtrack.com ; password: Admin1]
 * Operator: [email operator@gtrack.com : password: Operator1] 
  
