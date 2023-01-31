@@ -1,7 +1,7 @@
-#GTrack
+# GTrack
 Gtrack is a software born to manage logistic companies. You can handle deliveries, customers, packages, tracks and more in a single suite.
 
-#Technologies (Explaination and how to configure)
+# Technologies (Explaination and how to configure)
 
 ## Dotnet core backend
 The backend was developed with dotnet core 5.0 and MVC structure. All the endpoints are exposed by a single backend, that provides authentication and authorization (RBAC)
