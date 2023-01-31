@@ -14,8 +14,7 @@ Some endpoints are reserved to Admin users while some endpoints are accessible t
 * In the /Models folder you can find the C# class that defines the DTO for every specific entity.
 * Each class is named as {EntityName}.cs so you can understand which entity is represented by the class that you see.
 
-
-## Mysql Database
+## Mysql Database
 The backend uses a MySql database to store data. The connection is right now a single one, always available to the Database. So parallel requests are queued
 to guarrantee less load for the Database. N.B it could be easily changed by registering the Database connection with a different scope than singleton in the Startup.cs.
 
