@@ -1,0 +1,68 @@
+<div class="p-5 flex flex-column flex-auto">
+    <div>
+        <form [formGroup]="controller!.form" class="surface-card p-4 shadow-2 border-round" #formGroup>
+            <div class="grid formgrid p-fluid">
+                <div *ngFor="let col of controller!.getEditableColumns()" class="field mb-4 col-12"
+                    [class.md:col-6]="verticalColsNumber == 2" [class.md:col-4]="verticalColsNumber == 3"
+                    [class.md:col-2]="verticalColsNumber == 6" [class.md:col-3]="verticalColsNumber == 4">
+                    <label [for]="col.columnId" class="font-medium">{{col.displayName}}</label>
+                    <ng-container [ngSwitch]="col.dataType">
+                        <!-- TEXT -->
+                        <input *ngSwitchDefault [formControlName]="col.columnId" [id]="col.columnId" type="text"
+                            pInputText>
+                        <input *ngSwitchCase="'text'" [formControlName]="col.columnId" [id]="col.columnId" type="text"
+                            pInputText>
+                        <input *ngSwitchCase="'lwctext'" oninput="this.value = this.value.toLowerCase()"
+                            [formControlName]="col.columnId" [id]="col.columnId" type="text" pInputText>
+                        <input *ngSwitchCase="'upctext'" oninput="this.value = this.value.toUpperCase()"
+                            [formControlName]="col.columnId" [id]="col.columnId" type="text" pInputText>
+                        <address-picker *ngSwitchCase="'address'"
+                            [formGroup]="this.u.castToFormGroup(controller!.form.controls[col.columnId])!"></address-picker>
+                        <expiration-picker *ngSwitchCase="'expiration'"
+                            [formGroup]="this.u.castToFormGroup(controller!.form.controls[col.columnId])!"></expiration-picker>
+                        <!-- COMBOBOX -->
+                        <p-dropdown *ngSwitchCase="'comboBox'" [inputId]="col.columnId" [formControlName]="col.columnId"
+                            [optionLabel]="col.mappedKey ?? ''" optionValue="uid" [optionLabel]="col.mappedKey ?? ''"
+                            [filter]="true" [filterBy]="col.mappedKey ?? 'uid'"
+                            [options]="controller!.lists[col.sourceListName ?? ''].value ?? []" [showClear]="true"
+                            placeholder="Select an item" [id] = "col.columnId">
+                            <ng-template let-elem pTemplate="elem">
+                                <div class="flex align-items-center">
+                                    <div>{{elem[col.mappedKey ?? 'uid']}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                        <p-inputNumber *ngSwitchCase="'number'" [formControlName]="col.columnId" [showButtons]="true"
+                            mode="decimal" [suffix]="col.measureUnit ?? ''" [id]="col.columnId"></p-inputNumber>
+                        <p-inputNumber *ngSwitchCase="'phoneNumber'" [formControlName]="col.columnId"
+                            [showButtons]="true" [useGrouping]="false" [id]="col.columnId"></p-inputNumber>
+                        <p-inputNumber *ngSwitchCase="'currency'" [formControlName]="col.columnId" [showButtons]="true"
+                            mode="currency" currency="EUR" [id]="col.columnId"></p-inputNumber>
+                        <p-calendar *ngSwitchCase="'date'" dateFormat="yy/mm/dd" [showIcon]="true" inputId="icon"
+                            [formControlName]="col.columnId" [id]="col.columnId"></p-calendar>
+                        <!-- genericPicker -->
+
+                        <generic-picker *ngSwitchCase="'genericPicker'"
+                            [formGroup]=" this.controller!.getNestedFormGroup(col.columnId)"
+                            [cols]="col.nestedCols ?? []" [getLabeledValue]="col.propertyAggregationFunction"
+                            class="flex align-items-center" style="width: 100%;"></generic-picker>
+
+                        <!-- <div *ngSwitchCase="'none'">   {{ controller!.getPropertyLabeledValue(controller!._item!, col)}} </div> -->
+
+                    </ng-container>
+                </div>
+                <div class="surface-100 mb-3 col-12" style="height:2px"></div>
+                <div class="col-12 fromEnd">
+                    <button pButton icon="pi pi-check" [loading]="controller!.waitingResult"
+                        [disabled]="!controller!.form.valid || !controller!.form.touched"
+                        (click)="controller!.saveChanges()" pRipple label="{{'common.save' | translate}}"
+                        class="w-auto mt-3"></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="loader" *ngIf="controller!.waitingData">
+    <p-progressSpinner strokeWidth="8" [style]="{width: '50px', height: '50px'}"
+        animationDuration=".5s"></p-progressSpinner>
+</div>

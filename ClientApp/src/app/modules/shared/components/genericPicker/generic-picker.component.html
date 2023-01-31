@@ -1,0 +1,51 @@
+    <div class="flex align-items-center" style="width: 100%;">
+    <input type="text" id="labeled" readonly [value]="getLabeledValueInternal()" (click)="onOverlayPanelOpen(); op.toggle($event)" pInputText>
+    <button pButton pRipple icon="pi pi-trash" class="p-button-primary" (click)="deleteForm()"></button>
+    <p-overlayPanel #op [showCloseIcon]="false">
+        <form [formGroup]="form" class="surface-card p-2 shadow-2 border-round grid formgrid p-fluid p-1"
+        style="width: 430px; margin:0%;"  >
+            <!-- style="width: 430px; margin:0%; height: 360px;" -->
+            <div *ngFor="let col of cols" class="field col-12" [class.md:col-6]="verticalColsNumber == 2"
+                [class.md:col-4]="verticalColsNumber == 3" [class.md:col-2]="verticalColsNumber == 6"
+                [class.md:col-3]="verticalColsNumber == 4">
+                <label  style="font-size: small;" [for]="col.columnId" class="font-medium">{{col.displayName}}</label>
+                <ng-container [ngSwitch]="col.dataType">
+                    <!-- TEXT -->
+                    <input  *ngSwitchDefault [formControlName]="col.columnId" [id]="col.columnId" type="text" pInputText>
+                    <input  *ngSwitchCase="'text'" [formControlName]="col.columnId" [id]="col.columnId" type="text" pInputText>
+                    <input  *ngSwitchCase="'lwctext'" oninput="this.value = this.value.toLowerCase()"
+                        [formControlName]="col.columnId" [id]="col.columnId" type="text" pInputText>
+                    <input *ngSwitchCase="'upctext'" oninput="this.value = this.value.toUpperCase()"
+                        [formControlName]="col.columnId" [id]="col.columnId" type="text" pInputText>
+                    <address-picker *ngSwitchCase="'address'"
+                        [formGroup]="this.u.castToFormGroup(form.controls[col.columnId])!"></address-picker>
+                    <expiration-picker *ngSwitchCase="'expiration'"
+                        [formGroup]="this.u.castToFormGroup(form.controls[col.columnId])!"></expiration-picker>
+                    <!-- COMBOBOX -->
+                    <p-dropdown *ngSwitchCase="'comboBox'" [inputId]="col.columnId" [formControlName]="col.columnId"
+                        [optionLabel]="col.mappedKey ?? ''" optionValue="uid" [optionLabel]="col.mappedKey ?? ''" [filter]="true"
+                        [filterBy]="col.mappedKey ?? 'uid'" [options]="lists[col.sourceListName ?? ''].value ?? []"
+                        [showClear]="true" placeholder="Select an item">
+                        <ng-template let-elem pTemplate="elem">
+                            <div class="flex align-items-center">
+                                <div>{{elem[col.mappedKey ?? 'uid']}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <p-inputNumber *ngSwitchCase="'number'" [formControlName]="col.columnId" [showButtons]="true" mode="decimal"
+                        [suffix]="col.measureUnit ?? ''"></p-inputNumber>
+                    <p-inputNumber *ngSwitchCase="'phoneNumber'" [formControlName]="col.columnId" [showButtons]="true"
+                        [useGrouping]="false"></p-inputNumber>
+                    <p-inputNumber *ngSwitchCase="'currency'" [formControlName]="col.columnId" [showButtons]="true" mode="currency"
+                        currency="EUR"></p-inputNumber>
+                    <p-calendar *ngSwitchCase="'date'" dateFormat="yy/mm/dd" [showIcon]="true" inputId="icon"
+                        [formControlName]="col.columnId"></p-calendar>
+            
+                </ng-container>
+            </div>
+            <div style="height: 36px;"class="col-12 fromEnd" style="padding: 0;">
+                <button  style="width: 100px; height: 36px;" pButton icon="pi pi-check" [disabled] = "!form.valid || !form.touched" (click) = "saveChanges()" (click)="op.hide()"  pRipple label="{{'common.save' | translate}}" class="w-auto mb-4 mt-3" ></button>
+            </div> 
+        </form>
+    </p-overlayPanel>
+</div>

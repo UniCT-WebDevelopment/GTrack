@@ -1,0 +1,26 @@
+<button pButton pRipple (click)="op.toggle($event)" icon="pi pi-plus" class="p-button-primary"></button>
+<p-overlayPanel #op [showCloseIcon]="false">
+    <form [formGroup]="form" class="surface-card p-2 shadow-2 border-round grid formgrid p-fluid p-1"
+        style="width: 430px; margin:0%; height: 280px;">
+        <div class="field mb-2 col-12 md:col-6">
+            <label for="name" style="font-size: small;">{{'common.name' | translate}}</label>
+            <input formControlName="name" id="name" type="text" pInputText>
+        </div>
+        <div class="field mb-2 col-12 md:col-6">
+            <label for="surname" style="font-size: small;">{{'common.surname' | translate}}</label>
+            <input formControlName="surname" id="surname" type="text" pInputText>
+        </div>
+        <div class="field mb-2 col-12 md:col-12">
+            <label for="email" style="font-size: small;">Email</label>
+            <input formControlName="email" id="email" type="text" pInputText>
+        </div>
+        <div class="field mb-2 col-12 md:col-6">
+            <label for="phoneNumber" style="font-size: small;">{{'common.phoneNumber' | translate}}</label>
+            <input formControlName="phoneNumber" id="phoneNumber" type="text" pInputText>
+        </div>
+        <div class="col-12 fromEnd" style="padding: 0;">
+            <button pButton icon="pi pi-check" [disabled]="!form.valid || !form.touched" [loading]= "waitingResult" (click)="saveChanges()"
+                (click)="op.hide()" pRipple label="{{'common.save' | translate}}" class="w-auto mb-4 mt-3"></button>
+        </div>
+    </form>
+</p-overlayPanel>

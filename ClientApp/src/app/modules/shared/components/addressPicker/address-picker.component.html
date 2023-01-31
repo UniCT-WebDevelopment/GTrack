@@ -1,0 +1,35 @@
+    <div class="flex align-items-center">
+    <input type="text" id="address" readonly [value]="getLabeledAddress()" (click)="onOverlayPanelOpen(); op.toggle($event)" pInputText>
+    <button pButton pRipple icon="pi pi-trash" class="p-button-primary" (click)="deleteForm()"></button>
+    <p-overlayPanel #op [showCloseIcon]="false">
+        <form [formGroup]="form" class="surface-card p-2 shadow-2 border-round grid formgrid p-fluid p-1" style="width: 430px; margin:0%; height: 360px;">
+                <div class="field mb-2 col-12 md:col-6">
+                    <label for="state" style="font-size: small;">{{'address.country' | translate}}</label>
+                    <input formControlName="state" id="state" type="text" pInputText>
+                </div>
+                <div class="field mb-2 col-12 md:col-6">
+                    <label for="region" style="font-size: small;" >{{'address.region' | translate}}</label>
+                    <input formControlName="region" id="region" type="text" pInputText>
+                </div>
+                <div class="field mb-2 col-12 md:col-6">
+                    <label for="city" style="font-size: small;">{{'address.city' | translate}}</label>
+                    <input formControlName="city" id="city" type="text" pInputText>
+                </div>
+                <div class="field mb-2 col-12 md:col-10">
+                    <label for="streetname" style="font-size: small;">{{'address.streetName' | translate}}</label>
+                    <input formControlName="streetName" id="streetName" type="text" pInputText>
+                </div>
+                <div class="field mb-2 col-12 md:col-2">
+                    <label for="streetNumber" style="font-size: small;">{{'address.streetNumber' | translate}}</label>
+                    <input formControlName="streetNumber" id="streetNumber" type="text" pInputText>
+                </div>
+                <div class="field mb-2 col-12 md:col-3">
+                    <label for="postalCode" style="font-size: small;">{{'address.postalCode' | translate}}</label>
+                    <input formControlName="postalCode" id="postalCode" type="number" pInputText>
+                </div>
+                <div class="col-12 fromEnd" style="padding: 0;">
+                    <button pButton icon="pi pi-check" [disabled] = "!form.valid || !form.touched" (click) = "saveChanges()" (click)="op.hide()"  pRipple label="{{'common.save' | translate}}" class="w-auto mb-4 mt-3" ></button>
+                </div> 
+        </form>
+    </p-overlayPanel>
+</div>

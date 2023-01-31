@@ -1,0 +1,30 @@
+    <div class="flex align-items-center">
+    <input type="text" id="expiration" readonly [value]="getPickerValue()" (click)="onOverlayPanelOpen(); op.toggle($event)" pInputText>
+    <button pButton pRipple icon="pi pi-trash" class="p-button-primary" (click)="deleteForm()"></button>
+    <p-overlayPanel #op [showCloseIcon]="false">
+        <form [formGroup]="form" class="surface-card p-2 shadow-2 border-round grid formgrid p-fluid p-1" style="width: 400px; margin:0%; height: 200px;">
+                <div class="field mb-2 col-12 md:col-6">
+                    <label for="effectiveDate" style="font-size: small;">{{'trucks.effectiveDate' | translate}}</label>
+                    <p-calendar dateFormat="yy/mm/dd" [showIcon]="true" inputId="icon" id="effectiveDate" formControlName="effectiveDate"></p-calendar>
+                </div>
+                <div class="field mb-2 col-12 md:col-6">
+                    <label for="cost" style="font-size: small;" >{{'common.price' | translate}}</label>
+                    <p-inputNumber formControlName="cost" id="cost" type="number" [showButtons]="true" suffix=" €"></p-inputNumber>
+                </div>
+                <div class="field mb-2 col-12 md:col-6">
+                    <label for="paymentMethod" style="font-size: small;">{{'trips.costs.paymentMethod' | translate}}</label>
+                    <p-dropdown inputId="paymentMethod" formControlName="paymentMethod" optionLabel="value" optionValue="uid" [filter]="true" filterBy="value"
+                     [options]="this.paymentOptions" [showClear]="true" placeholder="{{'categories.select'| translate}}">
+                        <ng-template let-categ pTemplate="item">
+                            <div class="flex align-items-center">
+                                <div>{{categ.value}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="col-12 fromEnd" style="padding: 0;">
+                    <button pButton icon="pi pi-check" [disabled] = "!form.valid || !form.touched" (click) = "saveChanges()" (click)="op.hide()"  pRipple label="{{'common.save' | translate}}" class="" style="width: 100px; height: 40px;"></button>
+                </div> 
+        </form>
+    </p-overlayPanel>
+</div>

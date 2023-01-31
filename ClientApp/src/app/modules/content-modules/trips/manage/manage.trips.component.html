@@ -1,0 +1,108 @@
+
+<!-- selectionMode="single" -->
+<!-- [(selection)]="selectedItem" -->
+<p-table #dt [filters]= "this.tableFilters" [value]="(this.dataSource | async)!" styleClass="p-datatable-customers" [paginator]="true" [rowHover]="true" [rows]="30" sortMode="single"  
+     [loading]="waitingData" responsiveLayout="scroll" [showCurrentPageReport]="true"
+    currentPageReportTemplate="{{ 'common.showing' | translate:{first:'first', last:'last', totalRecords: 'totalRecords'} }}"
+    [filterDelay]="0" 
+    [globalFilterFields]="this.getFieldIds()">
+
+    <ng-template pTemplate="caption">
+        <div class="flex justify-content-between align-items-center table-header">
+            <span> {{'trips.entities' | translate}} </span>
+            <div class="flex justify-content-between align-items-center">
+
+                <button  pButton type="button" label = "{{ 'common.newItem' | translate }}" [routerLink] = "'./trip/edit/'" class="p-button-primary mr-4"  icon="pi pi-plus"></button>
+
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText  #textInput type="text" (input)="this.applySearchFilter(textInput.value, 'contains')" placeholder="{{ 'common.searching' | translate }}" />
+                </span>
+
+                <date-paginator (onSelectionChanges) = "this.onDateChanges($event)" [initialDate] = "this.selectedDate" [interval] = "this.interval"></date-paginator>
+
+                
+
+                <!-- buttons for clearing sort and filters -->
+                <!-- <div class= "flex flex-column justify-content-between">
+                    <button pButton type="button" (click) = "clearFilters()"class="p-button-secondary ml-4"  icon="pi pi-times"></button>
+                    <span>Clear filters</span>
+                </div>
+                <div class="flex flex-column justify-content-between">
+                    <button pButton type="button" (click) = "clearFilters()"class="p-button-secondary ml-4"  icon="pi pi-times"></button>
+                    <span>Clear sorting</span>
+                </div> -->
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th *ngFor="let col of cols" [pSortableColumn]="getFilterField(col)">
+                <div class="flex justify-content-between align-items-center">
+                    {{col.displayName}}
+                    <p-sortIcon [field]="getFilterField(col)"></p-sortIcon>
+                    <p-columnFilter [field]="getFilterField(col)" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
+                        <ng-template pTemplate="header">
+                            <div class="px-3 pt-3 pb-0">
+                                <span class="font-bold">
+                                    {{ 'common.picker' | translate:{'displayName':col.displayName} }}</span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-multiSelect [ngModel]="value" [options]="this.getFilterOptions(col.columnId)" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" optionValue="value">
+                                <ng-template let-option pTemplate="item">
+                                    <div>
+                                        <span class="ml-1">{{option.name}}</span>
+                                    </div>
+                                </ng-template>
+                            </p-multiSelect>
+                        </ng-template>
+                    </p-columnFilter> 
+                    
+                    <!-- default filter: -->
+                    <!-- <p-columnFilter type="text" [field]="col.columnId"  display="menu" class="ml-auto"></p-columnFilter> -->
+                </div>
+            </th>
+            <th>
+               {{'common.actions' | translate}}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+        <tr [pSelectableRow]="item">
+            <td *ngFor="let col of cols">
+                    <span class="p-column-title">{{col.displayName}}</span>
+                    <ng-container *ngIf="!col.calculatedRouterLink && !col.routerLink">{{this.getPropertyLabeledValue(item,col,true)}}</ng-container>
+                    <ng-container *ngIf="col.calculatedRouterLink"><a target="_blank" [routerLink]="this.col.calculatedRouterLink(item)">{{this.getPropertyLabeledValue(item,col,true)}}</a></ng-container>
+                    <ng-container *ngIf="!col.calculatedRouterLink && col.routerLink"><a target="_blank" [routerLink]="col.routerLink">{{this.getPropertyLabeledValue(item,col,true)}}</a></ng-container>
+
+                    <!-- <ng-container *ngIf = "!col.editType || col.editType !== 'date'"> {{this.getListItemLabeledName(item[col.columnId],col.columnId,false)}}</ng-container>   
+                    <ng-container *ngIf = "col.editType && col.editType == 'date'"> {{this.us.getLabeledDate(this.getListItemLabeledName(item[col.columnId],col.columnId,false))}}</ng-container> -->
+                    
+            </td>
+            <td style="text-align: center" >   
+                <!-- edit button -->
+                <button pButton type="button"  [routerLink] = "'./trip/edit/'+item.uid" class="p-button-primary m-1" icon="pi pi-pencil" pTooltip="{{'common.edit' | translate}}"></button>
+                <!-- edit button -->
+                <button pButton type="button"  [routerLink] = "'./stage/edit/'+ getFilterKeyForStagesRouterLink(item)" class="p-button-primary m-1" icon="pi pi-list" pTooltip="{{'common.editStage' | translate}}"></button> 
+                <!-- edit button -->
+                <button pButton type="button"  [routerLink] = "'./cost/edit/'+ getFilterKeyForCostsRouterLink(item)" class="p-button-primary m-1" icon="pi pi-euro" pTooltip="{{'common.editCost' | translate}}"></button>
+                <!-- delete button -->
+                <button pButton type="button" (click) = "deleteClicked(item)" class="p-button-secondary m-1"  icon="pi pi-trash" pTooltip="{{'common.delete' | translate}}"></button>
+            </td>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="8">{{'common.noItemsFound' | translate}}</td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [style]="{width: '98vw', height: '100vh'}" [draggable] = "false" [modal]="true" [header]="dialogTitle" position="bottom" [(visible)]="displayDialog" (onHide) = "editDialogClosed()">
+    <edit-wizard></edit-wizard>
+</p-dialog>
+<p-confirmDialog acceptLabel="{{'common.yes' | translate}}" [style]="{width: '50vw'}" key="positionDialog" position="top" [baseZIndex]="10000"></p-confirmDialog>
+<p-messages [value]="msgs" class="bottomBar"></p-messages>
+

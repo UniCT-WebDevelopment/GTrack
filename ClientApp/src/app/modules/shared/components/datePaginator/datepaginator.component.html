@@ -1,0 +1,13 @@
+<div class="pl-3 pr-3 flex flex-row flex-auto">
+    <button pButton type="button"  (click) = "previousClicked()" class="p-button-primary" icon="pi pi-chevron-left"></button>
+    <p-calendar #calendar
+     [view]="viewFormat"
+     [dateFormat]="dateFormat"
+     [readonlyInput]="true"
+     inputId="calendar"
+     [(ngModel)]="selectedDate"
+     (onSelect)="this.onSelect($event)">
+</p-calendar>
+<button pButton type="button"  (click) = "nextClicked()" class="p-button-primary" icon="pi pi-chevron-right"></button>
+<!-- <p-calendar dateFormat="yy/mm/dd" [showIcon]="true" inputId="icon" formControlName ="_startDate"></p-calendar> -->
+</div>

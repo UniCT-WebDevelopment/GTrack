@@ -1,0 +1,7 @@
+<list-items [entityType]="entityType" [entityService]="es" [dialogService]="ds"
+    [labeledIdentifierField]="labeledIdentifierField" [entityName]="entityName" [entityLabeledTitle]="entityTitle" [labeledDialogTitle]="dialogTitle" [cols]="cols"
+    [editCols]="this.editComponentColumns" [lists]="lists" [allowEdit]="this.allowEdit" [allowDelete]="this.allowDelete"
+    [allowCreate]="this.allowCreate"  [showSearchBar]="this.showSearchBar" 
+    [showPaginator]="this.showPaginator" [showDatesPaginator]= "true" [dateFilteringPropertyKey] = "this.dateFilteringPropertyKey" [showSelection]="this.showSelection"
+    [selectedItems]="this.selectedItems" (selectedItemsChange)="this.selectChange($event)" [selectablePredicate] = "this.selectablePredicate" [subsetKey] = "this.subsetKey" [dynamicMappings] = this.dynamicMappings>
+</list-items>

@@ -1,0 +1,251 @@
+<br>
+<!-- <ng-container [formGroup]="baseFormGroup">
+    <ng-container formArrayName="items"> -->
+<p-table #dt dataKey="value.uid" id="mainTable" [value]="itemsForm.controls" editMode="row"
+    styleClass="p-datatable-customers" [reorderableColumns]="true" [rowHover]="true" [rows]="5" [loading]="waitingData"
+    [filterDelay]="0" [globalFilterFields]="this.getFieldIds()" [scrollable]="true" scrollHeight="54vh">
+    <ng-template pTemplate="caption">
+        <div class="flex fromEnd justify-content-between align-items-center table-header">
+            <span> </span>
+            <div class="flex fromEnd justify-content-between align-items-center">
+                <button pButton type="button" label="{{ 'common.newItem' | translate }}" [disabled] = "!this.canAddItem()" (click)="addClicked();" class="p-button-primary mr-4"
+                    icon="pi pi-plus"></button>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText #textInput type="text"
+                        (input)="this.applySearchFilter(textInput.value, 'contains')"
+                        placeholder="{{'common.searching' | translate}}" />
+                </span>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <!-- <th>
+                Reorder
+            </th> -->
+            <th *ngFor="let col of cols" >
+                <div class="flex justify-content-between align-items-center">
+                    {{col.displayName}}
+                    <!-- specify the custom filter field option cause we are using formControls as datasource (value. is first) -->
+                    <p-columnFilter [field]="'value.'+getFilterField(col)" matchMode="in" display="menu"
+                        [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
+                        <ng-template pTemplate="header">
+                            <div class="px-3 pt-3 pb-0">
+                                <span class="font-bold">
+                                    {{ 'common.picker' | translate:{'displayName':col.displayName} }}</span>
+                            </div>
+                        </ng-template>
+
+
+                        <!-- [ngModel]="value"  -->
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-multiSelect [options]="this.getFilterOptions(col.columnId)" placeholder="Any"
+                                (onChange)="filter($event.value)" optionLabel="name" optionValue="value">
+                                <ng-template let-option pTemplate="item">
+                                    <div>
+                                        <span class="ml-1">{{option.name}}</span>
+                                    </div>
+                                </ng-template>
+                            </p-multiSelect>
+                        </ng-template>
+                    </p-columnFilter>
+
+                    <!-- default filter: -->
+                    <!-- <p-columnFilter type="text" [field]="col.columnId"  display="menu" class="ml-auto"></p-columnFilter> -->
+                </div>
+            </th>
+            <th alignFrozen="right" pFrozenColumn [frozen]="true" class="shadow s-left">
+                {{'common.actions' | translate}}
+            </th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+        <ng-container [formGroup]="baseFormGroup">
+            <ng-container formArrayName="items">
+                <tr [pSelectableRow]="item" [pEditableRow]="item" [pReorderableRow]="ri" [formGroupName]="ri">
+                    <!-- <td>
+                        <span class="pi pi-bars" [pReorderableRowHandle]="ri"></span>
+                    </td> -->
+
+                    <td *ngFor="let col of cols">
+                        <span class="p-column-title">{{col.displayName}}</span>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <!-- text edit -->
+                                <input *ngIf="!col.dataType || col.dataType == 'text'" pInputText type="text"
+                                    [formControlName]="col.columnId">
+                                <p-inputNumber *ngIf="!col.dataType || col.dataType == 'number'"
+                                    [formControlName]="col.columnId" [showButtons]="true" mode="decimal"
+                                    [suffix]="col.measureUnit ?? ''"></p-inputNumber>
+                                <p-inputNumber *ngIf="!col.dataType || col.dataType == 'currency'"
+                                    [formControlName]="col.columnId" [showButtons]="true" mode="currency"
+                                    currency="EUR"></p-inputNumber>
+                                <div *ngIf="col.dataType && col.dataType == 'none'">
+                                    {{this.getPropertyLabeledValue(item.getRawValue(),col)}}
+                                </div>
+                                
+                                <!-- combobox edit -->
+                                <div *ngIf="col.dataType && col.dataType == 'comboBox'" >
+                                    <p-dropdown [appendTo]="'body'" [inputId]="col.columnId"
+                                        [formControlName]="col.columnId" [optionLabel]="col.mappedKey ?? ''"
+                                        optionValue="uid" [optionLabel]="col.mappedKey ?? ''" [filter]="true"
+                                        [filterBy]="col.mappedKey ?? 'uid'" [options]="lists[col.sourceListName ?? ''].value ?? []"
+                                        [showClear]="true" placeholder="{{'common.select' | translate}}">
+                                        <ng-template let-elem pTemplate="elem">
+                                            <div class="flex align-items-center">
+                                                <div>{{elem[col.mappedKey ?? 'uid']}}</div>
+                                            </div>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+
+                                <div *ngIf="col.dataType && col.dataType == 'customer'" class="flex align-items-center">
+                                    <p-dropdown [appendTo]="'body'" [inputId]="col.columnId" [formControlName]="col.columnId"
+                                        [optionLabel]="col.mappedKey ?? ''" optionValue="uid" (onChange)="onCustomerSelectionChanges(item)" [filter]="true" [filterBy]="col.mappedKey ?? 'uid'"
+                                        [options]="lists[col.sourceListName ?? ''].value ?? []" [showClear]="true"
+                                        placeholder="{{'common.select' | translate}}">
+                                        <ng-template let-elem pTemplate="item">
+                                            <div class="flex align-items-center">
+                                                <div>{{elem[col.mappedKey ?? 'uid']}}</div>
+                                            </div>
+                                        </ng-template>
+                                    </p-dropdown>
+                                    <customer-picker (onCustomerCreated)="customerCreated($event, item);"></customer-picker>
+                                </div>
+
+                                <!-- si aprirà un ulteriore dialog con il componente che permette di configurare l'import della bolla in base ad una configurazione salvata. Questo stesso componente sarà richiamabile dal modulo magazzino.   -->
+                                <div *ngIf="col.dataType && col.dataType == 'documents'">
+                                    <p-fileUpload
+                                        *ngIf="!item.getRawValue()[col.columnId] || item.getRawValue()[col.columnId].length == 0"
+                                        mode="basic" [customUpload]="true"
+                                        (uploadHandler)="uploadFile(item.getRawValue(),$event)" [auto]="true"
+                                        chooseLabel="{{'common.select' | translate}}"></p-fileUpload>
+                                    <ng-container
+                                        *ngIf="item.getRawValue()[col.columnId] && item.getRawValue()[col.columnId].length > 0">
+                                        {{this.getPropertyLabeledValue(item.getRawValue(),col)}}</ng-container>
+                                </div>
+
+                                <!-- document upload -->
+                                <div *ngIf="col.dataType && col.dataType == 'document'">
+                                    <p-fileUpload
+                                        *ngIf="!item.getRawValue()[col.columnId] || item.getRawValue()[col.columnId].length == 0"
+                                        mode="basic" [customUpload]="true"
+                                        (uploadHandler)="uploadFile(item.getRawValue(),$event)" [auto]="true"
+                                        chooseLabel="{{'common.select' | translate}}"></p-fileUpload>
+                                    <ng-container
+                                        *ngIf="item.getRawValue()[col.columnId] && item.getRawValue()[col.columnId].length > 0">
+                                        {{this.getPropertyLabeledValue(item.getRawValue(),col)}}</ng-container>
+                                </div>
+                                <!-- datepicker -->
+                                <div *ngIf="col.dataType && col.dataType == 'date'">
+                                    <p-calendar [appendTo]="'body'" dateFormat="yy/mm/dd" [showIcon]="true"
+                                        inputId="icon" [formControlName]="col.columnId" [id] = "col.columnId + '-' + ri"></p-calendar>
+                                </div>
+
+                                <div *ngIf="col.dataType && col.dataType == 'address'" class="flex align-items-center">
+                                    <address-picker [formGroup]="getNestedFormGroup(col.columnId, ri)" class="flex align-items-center" ></address-picker>
+                                </div>
+                                
+
+                                <!-- la bolla in visualizzazione è un link che se lo clicchi lo scarichi, in edit è invece un bottone di upload bolla solo se non esiste già la bolla. (forse? forse dovrebbe essere un dialog a parte con l'import excel.) -->
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <ng-container *ngIf="!col.calculatedRouterLink && !col.routerLink">
+                                    {{this.getPropertyLabeledValue(item.getRawValue(),col)}}</ng-container>
+                                <ng-container *ngIf="col.calculatedRouterLink"><a target="_blank"
+                                        [routerLink]="this.col.calculatedRouterLink(item.getRawValue())">{{this.getPropertyLabeledValue(item.getRawValue(),col)}}</a>
+                                </ng-container>
+                                <ng-container *ngIf="!col.calculatedRouterLink && col.routerLink"><a target="_blank"
+                                        [routerLink]="col.routerLink">{{this.getPropertyLabeledValue(item.getRawValue(),col)}}</a>
+                                </ng-container>
+                            </ng-template>
+
+                        </p-cellEditor>
+                    </td>
+
+
+                    <td style="text-align:center" alignFrozen="right" pFrozenColumn [frozen]="true"
+                        class="shadow s-left">
+                        <!-- show select from current warehouse -->
+                        <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-inbox"
+                            (click)="openPackagesSelectionWizard(item.getRawValue());" class="p-button-secondary m-1" pTooltip="{{'trips.stages.associatePackage' | translate}}"></button>
+                        <!-- show open dtt wizard  if is a withdraw operation-->
+                        <button *ngIf="!editing && item.getRawValue().type == 'Withdraw'" pButton pRipple type="button"
+                            icon="pi pi-file-excel" (click)="openImportDttWizard(item.getRawValue());"
+                            class="p-button-secondary m-1" pTooltip="{{'trips.stages.importDtt' | translate}}"></button>
+
+                        <!-- show open widraw stage association if it is a delivery stage -->
+                        <button *ngIf="!editing && item.getRawValue().type == 'Delivery'" pButton pRipple type="button"
+                            icon="pi pi-list" (click)="openWithdrawStageAssociationWizard(item.getRawValue());"
+                            class="p-button-primary m-1" pTooltip="{{'trips.stages.associateStage' | translate}}"></button>
+
+                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            (click)="editClicked(item.getRawValue());" class="p-button-primary m-1" pTooltip="{{'common.edit' | translate}}"></button>
+
+                        <button [disabled]="!item.valid || !item.touched"  *ngIf="editing" pButton pRipple type="button"
+                            icon="pi pi-check" (click)="onRowEditSave(item)" 
+                            class=" p-button-primary m-1" pTooltip="{{'common.save' | translate}}"
+                            [loading] = "waitingResult"></button>
+
+                        <button *ngIf="editing" pButton pRipple type="button" icon="pi pi-trash"
+                            (click)="deleteClicked(item.getRawValue());" [disabled]="!item.getRawValue().uid"
+                            class=" p-button-secondary m-1" pTooltip="{{'common.delete' | translate}}"></button>
+
+                        <button *ngIf="editing" pButton pRipple type="button" icon="pi pi-times"
+                            (click)="onRowEditCancel(item);" class=" p-button-primary m-1 p-button-danger" pTooltip="{{'common.cancel' | translate}}"></button>
+                    </td>
+                </tr>
+            </ng-container>
+        </ng-container>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="8">{{'common.noItemsFound' | translate}}</td>
+        </tr>
+    </ng-template>
+</p-table>
+<!-- </ng-container> -->
+<!-- </ng-container> -->
+
+<div class="btnFooter">
+    <button pButton icon="pi pi-chevron-left" [routerLink]="'../../../trip/edit/' + getParentTripUid()" pRipple label="{{'common.previous' | translate}}"
+        class="w-auto mt-3"></button>
+    <button pButton icon="pi pi-chevron-right" [routerLink]="'../../../cost/edit/' + getNextStepRouterLink()" pRipple label="{{'common.next' | translate}}"
+        class="w-auto mt-3"></button>
+</div>
+
+
+<p-messages [value]="msgs" class="bottomBar"></p-messages>
+<div id="loader" *ngIf="waitingData">
+    <!-- <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner> -->
+    <p-progressSpinner strokeWidth="8" [style]="{width: '50px', height: '50px'}" animationDuration=".5s">
+    </p-progressSpinner>
+</div>
+
+<p-dialog [style]="{width: '95vw', height: '100vh'}" position="bottom" [draggable]="false" [modal]="true"
+    header="{{'trips.stages.associationWizard' | translate}}" [(visible)]="showWithdrawStageAssociationWizard"
+    (onHide)="withdrawStageAssociationWizardClosed()">
+    <nested-table #nt *ngIf = "deliveryStageAssociationSelectedStage" [tableItem]="rootTableItem" [showLeafSelection]="true" 
+        [(selectedItems)] = "selectedWithdrawStages" (selectedItemsChange) = "selectedWithdrawStagesChange($event)" 
+        [showSingleLeaf] = "true" [selectablePredicate] = "this.isStageSelectableForAssociation"></nested-table>
+    <div class="col-12 fromEnd">
+        <button pButton icon="pi pi-chevron-right" [loading]= "waitingWizardAssociationResult" [disabled]="!this.enableWithdrawStagesWizardButton"
+            (click)="withdrawStageAssociationWizardConfirmed()" pRipple label="{{'common.confirm' | translate}}" class="w-auto mt-3"></button>
+    </div>
+</p-dialog>
+
+<p-dialog [style]="{width: '95vw', height: '100vh'}" position="bottom" [draggable]="false" [modal]="true"
+    header="{{'trips.stages.packageWizard' | translate}}" [(visible)]="packageSelectionWizardOpened"
+    (onHide)="closePackageSelectionWizard()">
+    <manage-items *ngIf = "packagesWizardSelectedStage"  [allowEdit] = "false" [allowCreate] = "true" [showSearchBar] = "true" [entityType]="packageEntity" [entityService]="pServ" [dialogService]="pkgDlg"
+    [labeledIdentifierField]="'code'" [showPaginator]="true"  [entityName]="packageEntityName" [entityLabeledTitle]="packageEntityTitle" [labeledDialogTitle]="packageDialogTitle" [cols]="this.packagesCols" [showSelection]="true"
+    [(selectedItems)]="this.selectedPackages" [dynamicMappings] = "this.packagesDynamicMappings" [selectablePredicate] = "this.isPackageSelectable" [subsetKey] = "this.packageSelectionSubsetKey" [lists] = "packageSelectionLists">
+</manage-items>
+    <div class="col-12 fromEnd">
+        <button pButton icon="pi pi-chevron-right" [loading]= "waitingPackageSelectionResult"
+            (click)="packageSelectionWizardConfirmed()" pRipple label="{{'common.confirm' | translate}}" class="w-auto mt-3"></button>
+    </div>
+</p-dialog>

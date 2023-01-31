@@ -1,0 +1,17 @@
+.cdx-bg{
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url('../../../../assets/images/blocks/signin/signin-2.jpg') no-repeat;
+    background-size: cover;
+    display: flex;
+}
+
+
+@media (min-width: 1025px) {
+  .cdx-bg{
+    position: absolute;
+  }
+}

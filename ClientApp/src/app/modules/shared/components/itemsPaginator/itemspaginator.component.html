@@ -1,0 +1,6 @@
+<div class="pl-3 pr-3 flex flex-row flex-auto">
+    <button pButton type="button" [disabled]= "currentPage == 0" (click) = "previousClicked()" class="p-button-primary" icon="pi pi-chevron-left"></button>
+    <input #page readonly
+     [(ngModel)]="message" pInputText>
+    <button pButton type="button" [disabled] = "lastPage && lastPage == currentPage" (click) = "nextClicked()" class="p-button-primary" icon="pi pi-chevron-right"></button>
+</div>

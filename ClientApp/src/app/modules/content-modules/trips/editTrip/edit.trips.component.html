@@ -1,0 +1,85 @@
+<div class="p-5 flex flex-column flex-auto">
+    <div>
+        <form [formGroup] = "form" class="surface-card p-4 shadow-2 border-round" #formGroup>
+            <div class="grid formgrid p-fluid">
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="code" class="font-medium">{{ 'common.code' | translate }}</label>
+                    <input formControlName="code" id="code" type="text" pInputText>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="category" class="font-medium">{{ 'common.category' | translate }}</label>
+                    <p-dropdown inputId="category" formControlName="category" optionLabel="value" optionValue="uid" [filter]="true" filterBy="value" [options]="this.lists['tripCategories'].value ?? []" [showClear]="true" placeholder="{{'categories.select'| translate}}">
+                        <ng-template let-categ pTemplate="item">
+                            <div class="flex align-items-center">
+                                <!-- <img src="assets/images/blocks/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + driver.name + driver.surname" style="width:18px"/> -->
+                                <div>{{categ.value}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="km" class="font-medium">{{ 'trips.estKm' | translate }}</label>
+                    <!-- <input formControlName="km" id="km" type="text" pInputText> -->
+                    <p-inputNumber formControlName="km" id="km" type="text" suffix=" km"></p-inputNumber>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="startDate" class="font-medium">{{ 'trips.startDate' | translate }}</label>
+                    <p-calendar  dateFormat="yy/mm/dd" [showIcon]="true" inputId="icon" id="startDate" [formControlName] ="'startDate'"></p-calendar>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="endDate" class="font-medium">{{ 'trips.endDate' | translate }}</label>
+                    <p-calendar dateFormat="yy/mm/dd" [showIcon]="true" inputId="icon" id="endDate" [formControlName] ="'endDate'"></p-calendar>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="driver" class="font-medium">{{ 'drivers.entity' | translate }}</label>
+                    <p-dropdown inputId="driver" formControlName="driver"  optionLabel="surname" optionValue="uid" [filter]="true" filterBy="surname" [options]="this.lists['drivers'].value ?? []" [showClear]="true" placeholder="{{'drivers.select'| translate}}">
+                        <ng-template let-driver pTemplate="item">
+                            <div class="flex align-items-center">
+                                <!-- <img src="assets/images/blocks/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + driver.name + driver.surname" style="width:18px"/> -->
+                                <div>{{driver.name + " " + driver.surname}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div> 
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="track" class="font-medium">{{ 'trucks.types.truck' | translate }}</label>
+                    <p-dropdown inputId="track" formControlName="track" optionLabel="licensePlate" optionValue="uid" [filter]="true" filterBy="licensePlate" [options]="this.lists['trucks'].value ?? []" [showClear]="true" placeholder="{{'trucks.select'| translate}}">
+                        <ng-template let-truck pTemplate="item">
+                            <div class="flex align-items-center">
+                                <!-- <img src="assets/images/blocks/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + driver.name + driver.surname" style="width:18px"/> -->
+                                <div>{{truck.licensePlate + " [" + truck.manufacturer + "]"}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="trailer" class="font-medium">{{ 'trucks.types.trailer' | translate }}</label>
+                    <p-dropdown inputId="trailer" formControlName="trailer" optionLabel="licensePlate" optionValue="uid" [filter]="true" filterBy="licensePlate" [options]="this.lists['trailers'].value ?? []" [showClear]="true" placeholder="{{'trailers.select'| translate}}">
+                        <ng-template let-trailer pTemplate="item">
+                            <div class="flex align-items-center">
+                                <!-- <img src="assets/images/blocks/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + driver.name + driver.surname" style="width:18px"/> -->
+                                <div>{{trailer.licensePlate + " [" + trailer.manufacturer + "]"}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="activeHoursPerDay" class="font-medium">{{ 'trips.activeHours' | translate }}</label>
+                    <p-inputNumber formControlName="activeHoursPerDay" [showButtons]="true"></p-inputNumber>
+                </div>
+            
+                <div class="surface-100 mb-3 col-12" style="height:2px"></div>
+                
+            </div>
+        </form>
+    </div>
+</div>
+<div class="col-12 fromEnd">
+    <button pButton  icon="pi pi-chevron-right" [loading]= "waitingResult" [disabled] = "isNextButtonDisabled(form)" (click)="saveChanges()" pRipple label="{{'common.next' | translate}}" class="w-auto mt-3"></button>
+</div>
+
+<div id = "loader" *ngIf="waitingData">
+    <!-- <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner> -->
+    <p-progressSpinner strokeWidth="8" [style]="{width: '50px', height: '50px'}" animationDuration=".5s"></p-progressSpinner>
+</div>

@@ -1,0 +1,154 @@
+@import "../node_modules/primeng/resources/themes/fluent-light/theme.css";
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+
+body {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+
+#loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 100;
+    // -webkit-filter: blur(5px);
+    // -moz-filter: blur(5px);
+    // -o-filter: blur(5px);
+    // -ms-filter: blur(5px);
+    // filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.4);
+    transition-duration: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes p-progress-spinner-color {
+
+    100%,
+    0%,
+    40%,
+    66%,
+    80%,
+    90% {
+        stroke: #16697A;
+    }
+}
+
+.p-progress-spinner-circle {
+    stroke: #16697A !important;
+}
+
+
+/// --- COMMON COMPONENT STYLING --- /// 
+/// 
+.p-datatable.p-datatable-customers .p-dropdown-label:not(.p-placeholder) {
+    text-transform: unset !important;
+}
+ 
+p-table{
+        .p-calendar .p-inputtext,
+        .p-inputnumber-input {
+            width: 120px !important;
+        }
+    
+        .p-datatable th,
+        .p-datatable .p-datatable-tbody>tr>td {
+            min-width: 220px !important; //now it's ok 
+        }
+    
+        .p-datatable.p-datatable-customers .p-dropdown-label:not(.p-placeholder) {
+            text-transform: unset !important;
+        }
+    
+        .p-datatable-tbody .p-inputtext {
+            max-width: 120px !important;
+        }
+
+    }
+
+
+.shadow {
+    box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.2);
+    clip-path: inset(var(--t, 0) var(--r, 0) var(--b, 0) var(--l, 0))
+}
+
+.s-top {
+    --t: -100%;
+}
+
+.s-right {
+    --r: -100%;
+}
+
+.s-bottom {
+    --b: -100%;
+}
+
+.s-left {
+    --l: -100%;
+}
+
+.ellips {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.p-overlaypanel-content {
+    display: flex;
+    flex-direction: column;
+
+    a{
+        text-decoration: none;
+        padding: 0rem;
+        color: var(--text-color);
+        cursor: pointer;
+    }
+}
+.p-overlaypanel .p-overlaypanel-content {
+    padding: 0 !important;
+}
+
+
+.btnFooter{
+    display: flex;
+    justify-content: space-between;
+}
+
+cdx-authentication {
+    mat-form-field {
+        margin:  20px 0;
+    }
+    
+    .mat-form-field-appearance-outline .mat-form-field-flex {
+        padding: 20px !important;
+    }
+    
+    .mat-form-field-label-wrapper {
+        top: -36px;
+    }
+}
+
+// p-table {
+//     .align-items-center {
+//         flex-wrap: wrap !important;
+
+//         button {
+//             margin-top: 10px;
+//             margin-bottom: 10px;
+//         }
+//     }
+// }

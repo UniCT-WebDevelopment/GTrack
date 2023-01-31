@@ -1,0 +1,118 @@
+<p-table #dt [value]="(controller!.dataSource | async)!" [dataKey] = "'uid'" styleClass="p-datatable-customers" [paginator]="true"
+    [rowHover]="true" [rows]="30" sortMode="single" [loading]="controller!.waitingData" responsiveLayout="scroll"
+    [showCurrentPageReport]="true" currentPageReportTemplate="{{ 'common.showing' | translate:{first:'first', last:'last', totalRecords: 'totalRecords'} }}"
+    [filterDelay]="0" [globalFilterFields]="this.controller!.getFieldIds()" [expandedRowKeys]="expandedRows">
+
+    <ng-template *ngIf="this.showSearchBar || this.allowCreate || this.tableItem!.showDatesPaginator" pTemplate="caption">
+        <div class="flex justify-content-between align-items-center table-header">
+            <span> {{this.tableItem!.labeledDialogTitle}} </span>
+            <div class="flex justify-content-between align-items-center">
+
+                <button *ngIf="this.allowCreate" pButton type="button" label="New Item"
+                    (click)="controller!.addClicked()" class="p-button-primary mr-4" icon="pi pi-plus"></button>
+
+                <span *ngIf="this.showSearchBar" class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText #textInput type="text"
+                        (input)="this.controller!.applySearchFilter(textInput.value, 'contains')"
+                        placeholder="{{ 'common.picker' | translate:{'displayName':this.tableItem?.entityName} }}" />
+                </span>
+                <date-paginator *ngIf= "this.tableItem!.showDatesPaginator" (onSelectionChanges) = this.controller!.onDateChanges($event) [initialDate] = this.controller!.selectedDate></date-paginator>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <!-- expandable row handler -->
+            <th style="width: 5rem"></th> 
+            <th *ngFor="let col of tableItem!.cols" [pSortableColumn]="col.columnId">
+                <div class="flex justify-content-between align-items-center">
+                    {{col.displayName}}
+                    <p-sortIcon [field]="col.columnId"></p-sortIcon>
+                    <p-columnFilter [field]="col.columnId" matchMode="in" display="menu" [showMatchModes]="false"
+                        [showOperator]="false" [showAddButton]="false" class="ml-auto">
+                        <ng-template pTemplate="header">
+                            <div class="px-3 pt-3 pb-0">
+                                <span class="font-bold">
+                                    {{ 'common.picker' | translate:{'displayName':col.displayName} }}</span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-multiSelect [ngModel]="value" [options]="this.controller!.getFilterOptions(col.columnId)"
+                                placeholder="Any" (onChange)="filter($event.value)" optionLabel="name"
+                                optionValue="name">
+                                <ng-template let-option pTemplate="item">
+                                    <div>
+                                        <span class="ml-1">{{option.name}}</span>
+                                    </div>
+                                </ng-template>
+                            </p-multiSelect>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+            </th>
+            <!-- todo: add ngIf (if edit or delete is active show the header) -->
+            <ng-container *ngIf="this.allowDelete || this.allowEdit">
+                <th>
+                    {{'common.actions' | translate}}
+                </th>
+            </ng-container>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-expanded="expanded">
+        <tr>
+            <td>
+                <button type="button" pButton pRipple  (click)= "showNestedClicked(item)" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+            </td>
+            <td *ngFor="let col of tableItem!.cols">
+                <span class="p-column-title">{{col.displayName}}</span>
+                {{ controller!.getPropertyLabeledValue(item, col)}}
+            </td>
+            <ng-container *ngIf="this.allowDelete || this.allowEdit">
+                <td style="text-align: center">
+                    <!-- edit button -->
+                    <button *ngIf="this.allowEdit" pButton type="button" (click)="controller!.editClicked(item)"
+                        class="p-button-primary m-1" icon="pi pi-pencil"></button>
+
+                    <!-- delete button -->
+                    <button *ngIf="this.allowDelete" pButton type="button" (click)="controller!.deleteClicked(item)"
+                        class="p-button-secondary m-1" icon="pi pi-trash"></button>
+                </td>
+            </ng-container>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-item>
+        <td colspan="100">
+            <div class="p-3 pl-6">
+                <list-items [entityType]="tableItem!.children!.entityType" 
+                    [entityService]="tableItem!.children!.entityService" 
+                    [dialogService]="tableItem!.children!.dialogService" 
+                    [labeledIdentifierField]="tableItem!.children!.labeledIdentifierField" 
+                    [entityName]="tableItem!.children!.entityName" 
+                    [cols]="tableItem!.children!.cols"
+                    [lists]="tableItem!.children!.mappingLists ?? {}"
+                    [subsetKey]= "getChildCacheKey(item)"
+                    [showSelection] = "this.showLeafSelection"
+                    [initFilters] = "tableItem!.children!.initFilters"
+                    [selectedItems] = "this.selectedItems"
+                    (selectedItemsChange) = this.selectionChange($event)
+                    [selectablePredicate] = this.selectablePredicate>
+                </list-items>
+            </div>
+        </td>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="8">{{'common.noItemsFound' | translate}}</td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [draggable]="false" [modal]="true" [header]="controller!.dialogTitle" position="bottom"
+    [(visible)]="controller!.displayDialog" (onHide)="controller!.editDialogClosed()">
+    <edit-item [cols]="this.tableItem!.cols" [entityType]="this.tableItem!.entityType" [dialogService]="this.tableItem!.dialogService"
+        [entityService]="this.tableItem!.entityService" [lists]="controller!.lists"></edit-item>
+</p-dialog>
+<p-confirmDialog acceptLabel="{{'common.yes' | translate}}" [style]="{width: '50vw'}" key="positionDialog" position="top" [baseZIndex]="10000"></p-confirmDialog>
+<p-messages [value]="controller!.msgs" class="bottomBar"></p-messages>

@@ -1,0 +1,52 @@
+<div class="px-4 py-8 md:px-6 lg:px-8 cdx-bg">
+    <div style="margin:auto" class="flex flex-wrap">
+        <div class="w-full lg:w-6 p-4 lg:p-7" style="background-color: rgba(255,255,255,.7)">
+            <img src="assets/images/blocks/logos/bastion-purple.svg" alt="Image" height="50" class="mb-6">
+            <div class="text-xl text-900 font-500 mb-3">Benvenuto su GTrack</div>
+            <p class="text-600 line-height-3 mt-0 mb-6">Gtrack ti permette di gestire la logistica della tua azienda di trasporti.</p>
+            <ul class="list-none p-0 m-0">
+                <li class="flex align-items-start mb-4">
+                    <div>
+                        <span class="flex align-items-center justify-content-center bg-purple-400" style="width:38px;height:38px;border-radius:10px">
+                            <i class="text-xl text-white pi pi-inbox"></i>
+                        </span>
+                    </div>
+                    <div class="ml-3">
+                        <span class="font-medium text-900">Gestisci il tuo magazzino</span>
+                        <p class="mt-2 mb-0 text-600 line-height-3">Visualizza i colli in consegna, quelli in magazzino e quelli in arrivo. </p>
+                    </div>
+                </li>
+                <li class="flex align-items-start mb-4">
+                    <div>
+                        <span class="flex align-items-center justify-content-center bg-purple-400" style="width:38px;height:38px;border-radius:10px">
+                            <i class="text-xl text-white pi pi-shield"></i>
+                        </span>
+                    </div>
+                    <div class="ml-3">
+                        <span class="font-medium text-900">Organizza i tuoi viaggi</span>
+                        <p class="mt-2 mb-0 text-600 line-height-3">Organizza facilmente le tue tratte, scegliendo l'autista ed il mezzzo in base alle informazioni disponibili.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+            <form [formGroup]="form" (keyup.enter)="null" class="w-full lg:w-6 p-4 lg:p-7 surface-card">
+                <div class="text-900 text-2xl font-medium mb-6">Login</div>
+                <label for="email3" class="block text-900 font-medium mb-2">Email</label>
+                <input id="email3" formControlName="email" type="text" pInputText class="w-full mb-4">
+
+                <label for="password3" class="block text-900 font-medium mb-2">Password</label>
+                <input id="password3" formControlName="password" type="password" pInputText class="w-full mb-4">
+
+                <div class="flex align-items-center justify-content-between mb-6">
+                    <div class="flex align-items-center">
+                        <p-checkbox id="rememberme3" [binary]="true" styleClass="mr-2"></p-checkbox>
+                        <label for="rememberme3">Remember me</label>
+                    </div>
+                </div>
+
+                <button pButton pRipple (click)="login()" label="Login" icon="pi pi-user" class="w-full"></button>
+
+               
+        </form>
+    </div>
+</div>

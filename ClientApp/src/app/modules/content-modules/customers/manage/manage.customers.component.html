@@ -1,0 +1,10 @@
+<list-items [entityType]="entityType" [entityService]="es" [dialogService]="ds"
+    [labeledIdentifierField]="labeledIdentifierField" [entityName]="entityName" [entityLabeledTitle]="entityTitle" [editCols]="this.cols" [cols]="this.cols" [labeledDialogTitle]="this.dialogTitle" [allowEdit]="true"
+    [allowDelete]="true" [allowCreate]="true"  [showSearchBar]="true" [showPaginator]="true" [detailsRoutes]="this.detailsRoutes">
+
+</list-items>
+
+<p-dialog [style]="{width: '95vw', height: '95vh'}" position="bottom"  [(visible)]="showDetailDialog" [draggable]="false" [modal]="true"
+    header="{{'customer.dialog.detail' | translate}}" (onHide)="dismissDetailsDialog()">
+    <router-outlet></router-outlet>
+</p-dialog>

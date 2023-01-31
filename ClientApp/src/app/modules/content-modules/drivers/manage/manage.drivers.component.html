@@ -1,0 +1,12 @@
+<list-items [entityType]="entityType" [entityService]="es" [dialogService]="ds"
+[labeledIdentifierField]="labeledIdentifierField" [editCols] = "editCols" [entityName]="entityName" [entityLabeledTitle]="labeledEntityName" [cols]="this.cols" [labeledDialogTitle]="this.labeledDialogTitle" [allowEdit]="true"
+[allowDelete]="true" [allowCreate]="true" [showSearchBar]="true" [showPaginator]="true" [detailsRoutes] = "detailsRoutes">
+</list-items>
+
+<p-dialog [style]="{width: '95vw', height: '95vh'}" position="bottom"  [(visible)]="showDetailDialog" [draggable]="false" [modal]="true"
+    header="{{'drivers.dialog.detail' | translate }}" (onHide)="dismissDetailsDialog()">
+    <router-outlet></router-outlet>
+</p-dialog>
+
+
+

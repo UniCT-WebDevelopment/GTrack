@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.810.25
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gtrack", "gtrack.csproj", "{DC96B1F1-DF7A-4B9B-A5DD-D54FE6AAEB4C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC96B1F1-DF7A-4B9B-A5DD-D54FE6AAEB4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC96B1F1-DF7A-4B9B-A5DD-D54FE6AAEB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC96B1F1-DF7A-4B9B-A5DD-D54FE6AAEB4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC96B1F1-DF7A-4B9B-A5DD-D54FE6AAEB4C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D0CB2ED-CCD5-4AFD-9D32-F0E652198059}
+	EndGlobalSection
+EndGlobal

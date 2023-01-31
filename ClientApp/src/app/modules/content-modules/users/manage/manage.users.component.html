@@ -1,0 +1,9 @@
+<list-items [entityType]="entityType" [entityService]="es" [dialogService]="ds" [entityLabeledTitle]="entityTitle" [labeledDialogTitle]="labeledDialogTitle"
+    [labeledIdentifierField]="labeledIdentifierField" [entityName]="entityName" [cols]="cols" [editCols] = "editCols" [allowEdit]="true"
+    [allowDelete]="true" [lists] = "lists" [allowCreate]="true"  [showSearchBar]="true" [showPaginator]="true" [detailsRoutes] = "this.detailsRoutes">
+</list-items>
+
+<p-dialog [style]="{width: '35vw', height: '38vh'}" position="center"  [(visible)]="showDetailDialog" [draggable]="false" [modal]="true"
+    header="{{'common.changepassword' | translate }}" (onHide)="dismissDetailsDialog()">
+    <router-outlet></router-outlet>
+</p-dialog>

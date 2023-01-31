@@ -1,0 +1,187 @@
+<br>
+
+<p-table #dt id="mainTable" dataKey="value.uid" [value]="controller!.itemsForm.controls" editMode="row" (selectionChange)="selectionChange($event);" [selection]= "this.controller!.getFormGroupsForItems(this.selectedItems)" [selectionMode] = "'multiple'"
+    styleClass="p-datatable-customers" [reorderableColumns]="true" [rowHover]="true" [rows]="5" [loading]="controller!.waitingData"
+    [filterDelay]="0" [globalFilterFields]="controller!.getFieldIds()" [scrollable]="true" scrollHeight="54vh">
+    <ng-template *ngIf = "this.showSearchBar || this.allowCreate || this.showDatesPaginator || this.showItemsPaginator" pTemplate="caption">
+        <div class="flex justify-content-between align-items-center table-header">
+            <span > {{this.entityLabeledTitle}}</span>
+            <div class="flex justify-content-between align-items-center">
+                <button *ngIf="this.allowCreate"  pButton type="button" label = "{{'common.newItem' | translate }}" [disabled] = "!this.controller!.canAddItem()" (click) = "controller!.addClicked()"class="p-button-primary mr-4"  icon="pi pi-plus"></button>
+        
+                <span *ngIf = "this.showSearchBar" class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText  #textInput type="text" (input)="this.controller!.applySearchFilter(textInput.value, 'contains')" placeholder="{{'common.searching' | translate}}" />
+                </span>
+                <date-paginator *ngIf= "this.showDatesPaginator" (onSelectionChanges) = this.controller!.onDateChanges($event) [initialDate] = this.controller!.selectedDate></date-paginator>
+                <items-paginator *ngIf= "this.showItemsPaginator" (onPageChanges) = this.controller!.onPageChanges($event) [itemsPerPage] = "this.itemsPerPage" [allLoaded] = this.controller!.onAllLoaded></items-paginator>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th *ngIf="this.showSelection" style="width: 4rem">
+                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th *ngFor="let col of cols">
+                <div class="flex justify-content-between align-items-center">
+                    {{col.displayName}}
+                    <!-- specify the custom filter field option cause we are using formControls as datasource (value. is first) -->
+                    <p-columnFilter [field]="'value.'+ controller!.getFilterField(col)" matchMode="in" display="menu"
+                        [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
+                        <ng-template pTemplate="header">
+                            <div class="px-3 pt-3 pb-0">
+                                <span class="font-bold">
+                                    {{ 'common.picker' | translate:{'displayName':col.displayName} }}</span>
+                            </div>
+                        </ng-template>
+
+
+                        <!-- [ngModel]="value"  -->
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-multiSelect [options]="controller!.getFilterOptions(col.columnId)" placeholder="Any"
+                                (onChange)="filter($event.value)" optionLabel="name" optionValue="value">
+                                <ng-template let-option pTemplate="item">
+                                    <div>
+                                        <span class="ml-1">{{option.name}}</span>
+                                    </div>
+                                </ng-template>
+                            </p-multiSelect>
+                        </ng-template>
+                    </p-columnFilter>
+
+                    <!-- default filter: -->
+                    <!-- <p-columnFilter type="text" [field]="col.columnId"  display="menu" class="ml-auto"></p-columnFilter> -->
+                </div>
+            </th>
+            <th alignFrozen="right" pFrozenColumn [frozen]="true" class="shadow s-left">
+                {{'common.actions' | translate}}
+            </th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+        <ng-container [formGroup]="controller!.baseFormGroup">
+            <ng-container formArrayName="items">
+                <tr [pEditableRow]="item" [formGroupName]="ri">
+                    <td *ngIf="this.showSelection" >
+                        <p-tableCheckbox [disabled]= "!this.selectablePredicate(item.getRawValue())" [value]="item"></p-tableCheckbox>
+                    </td>
+                    <!-- <td>
+                        <span class="pi pi-bars" [pReorderableRowHandle]="ri"></span>
+                    </td> -->
+                    <td *ngFor="let col of cols">
+                        <span class="p-column-title">{{col.displayName}}</span>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <!-- text edit -->
+                                <input *ngIf="!col.dataType || col.dataType == 'text'" pInputText type="text"
+                                    [formControlName]="col.columnId" [id] = "col.columnId + '-' + ri">
+                                <input *ngIf="col.dataType && col.dataType == 'lwctext'" oninput="this.value = this.value.toLowerCase()" [formControlName]="col.columnId" [id]="col.columnId" type="text" [id] = "col.columnId + '-' + ri" pInputText>
+                                <input *ngIf="col.dataType && col.dataType == 'upctext'" oninput="this.value = this.value.toUpperCase()" [formControlName]="col.columnId" [id]="col.columnId" type="text" [id] = "col.columnId + '-' + ri" pInputText>
+                                <p-inputNumber *ngIf="col.dataType && col.dataType == 'number'"
+                                    [formControlName]="col.columnId" [showButtons]="true" mode="decimal"
+                                    [suffix]="col.measureUnit ?? ''" [id] = "col.columnId + '-' + ri"></p-inputNumber>
+                                <p-inputNumber *ngIf="col.dataType && col.dataType == 'currency'"
+                                    [formControlName]="col.columnId" [showButtons]="true" mode="currency"
+                                    currency="EUR" [id] = "col.columnId + '-' + ri"></p-inputNumber>
+                                <div *ngIf="col.dataType && col.dataType == 'none'">
+                                    {{controller!.getPropertyLabeledValue(item.value,col)}}</div>
+                                <!-- combobox edit -->
+                                <div *ngIf="col.dataType && col.dataType == 'comboBox'">
+                                    <!-- <label for="track" class="font-medium">Track</label> -->
+                                    <p-dropdown [appendTo]="'body'" [inputId]="col.columnId"
+                                        [formControlName]="col.columnId" [optionLabel]="col.mappedKey ?? ''"
+                                        optionValue="uid" [optionLabel]="col.mappedKey ?? ''" [filter]="true"
+                                        [filterBy]="col.mappedKey ?? 'uid'" [options]="lists[col.sourceListName ?? ''].value ?? []"
+                                        [showClear]="true" placeholder="{{'common.select'| translate}}" [id] = "col.columnId + '-' + ri">
+                                        <ng-template let-elem pTemplate="elem">
+                                            <div class="flex align-items-center">
+                                                <div>{{elem[col.mappedKey ?? 'uid']}}</div>
+                                            </div>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+
+                                <!-- si aprirà un ulteriore dialog con il componente che permette di configurare l'import della bolla in base ad una configurazione salvata. Questo stesso componente sarà richiamabile dal modulo magazzino.   -->
+                                <div *ngIf="col.dataType && col.dataType == 'documents'">
+                                    <p-fileUpload
+                                        *ngIf="!item.value[col.columnId] || item.value[col.columnId].length == 0"
+                                        mode="basic" [customUpload]="true"
+                                        (uploadHandler)="uploadFile(item.value,$event)" [auto]="true"
+                                        chooseLabel="Browse"></p-fileUpload>
+                                    <ng-container
+                                        *ngIf="item.value[col.columnId] && item.value[col.columnId].length > 0">
+                                        {{controller!.getPropertyLabeledValue(item.value,col)}}</ng-container>
+                                </div>
+
+                                <!-- document upload -->
+                                <div *ngIf="col.dataType && col.dataType == 'document'">
+                                    <p-fileUpload
+                                        *ngIf="!item.value[col.columnId] || item.value[col.columnId].length == 0"
+                                        mode="basic" [customUpload]="true"
+                                        (uploadHandler)="uploadFile(item.value,$event)" [auto]="true"
+                                        chooseLabel="Browse"></p-fileUpload>
+                                    <ng-container
+                                        *ngIf="item.value[col.columnId] && item.value[col.columnId].length > 0">
+                                        {{controller!.getPropertyLabeledValue(item.value,col)}}</ng-container>
+                                </div>
+                                <!-- datepicker -->
+                                <div *ngIf="col.dataType && col.dataType == 'date'">
+                                    <p-calendar [appendTo]="'body'" dateFormat="yy/mm/dd" [showIcon]="true"
+                                        inputId="icon" [formControlName]="col.columnId" [id] = "col.columnId + '-' + ri"></p-calendar>
+                                </div>
+                                <!-- address -->
+                                <div *ngIf="col.dataType && col.dataType == 'address'" class="flex align-items-center">
+                                    <address-picker [formGroup]="this.controller!.getNestedFormGroup(col.columnId, ri)" class="flex align-items-center" [id] = "col.columnId + '-' + ri"></address-picker>
+                                </div>
+                                <!-- genericPicker -->
+                                <div *ngIf="col.dataType && col.dataType == 'genericPicker'" class="flex align-items-center">
+                                    <generic-picker [formGroup]="this.controller!.getNestedFormGroup(col.columnId, ri)" [cols] = "col.nestedCols ?? []"  [getLabeledValue] = "col.propertyAggregationFunction"  class="flex align-items-center" [id] = "col.columnId + '-' + ri"></generic-picker>
+                                </div>
+
+                                <!-- la bolla in visualizzazione è un link che se lo clicchi lo scarichi, in edit è invece un bottone di upload bolla solo se non esiste già la bolla. (forse? forse dovrebbe essere un dialog a parte con l'import excel.) -->
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <ng-container *ngIf="!col.calculatedRouterLink && !col.routerLink">
+                                    {{controller!.getPropertyLabeledValue(item.value,col,true)}}</ng-container>
+                                <ng-container *ngIf="col.calculatedRouterLink"><a target="_blank"
+                                        [routerLink]="this.col.calculatedRouterLink(item.value)">{{controller!.getPropertyLabeledValue(item.value,col,true)}}</a>
+                                </ng-container>
+                                <ng-container *ngIf="!col.calculatedRouterLink && col.routerLink"><a target="_blank"
+                                        [routerLink]="col.routerLink">{{controller!.getPropertyLabeledValue(item.value,col,true)}}</a>
+                                </ng-container>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td style="text-align:center" alignFrozen="right" pFrozenColumn [frozen]="true"
+                        class="shadow s-left">
+                        <button *ngIf="!editing && this.allowEdit" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            (click)="controller!.editClicked(item.value);" class="p-button-primary m-1" pTooltip="{{'common.edit' | translate}}"></button>
+                        <button [disabled]="!item.valid || !item.touched" *ngIf="editing" pButton pRipple type="button"
+                            pSaveEditableRow icon="pi pi-check" (click)="controller!.onRowEditSave(item);"
+                            class=" p-button-primary m-1" pTooltip="{{'common.save' | translate}}"></button>
+                        <button *ngIf="editing" [disabled]="!item.value.uid" pButton pRipple type="button"
+                            icon="pi pi-trash" (click)="controller!.deleteClicked(item.value);"
+                            class=" p-button-secondary m-1" pTooltip="{{'common.delete' | translate}}"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" icon="pi pi-times"
+                            (click)="controller!.onRowEditCancel(item);" class=" p-button-primary m-1 p-button-danger" pTooltip="{{'common.cancel' | translate}}"></button>
+                    </td>
+                </tr>
+            </ng-container>
+        </ng-container>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="8">{{'common.noItemsFound' | translate}}</td>
+        </tr>
+    </ng-template>
+</p-table>
+
+
+<p-messages [value]="controller!.msgs" class="bottomBar"></p-messages>
+<div id="loader" *ngIf="controller!.waitingData">
+    <p-progressSpinner strokeWidth="8" [style]="{width: '50px', height: '50px'}" animationDuration=".5s">
+    </p-progressSpinner>
+</div>
